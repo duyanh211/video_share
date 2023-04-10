@@ -36,16 +36,16 @@ if(isset($_SESSION['login_id'])){
 			$conn->query("INSERT INTO views set upload_id = $id , user_id = {$_SESSION['login_id']}");
 		}
 	}
-}else{
-	$ip = getIPAddress();
-	$chk = $conn->query("SELECT * FROM views where upload_id = $id and ip_address ='$ip' ")->num_rows;
-	if($chk <= 0){
-		$conn->query("INSERT INTO views set upload_id = $id , ip_address = '$ip'");
-	}
-
+	
 }
-	$views = $conn->query("SELECT * FROM views where upload_id = $id ")->num_rows;
-	$conn->query("UPDATE video_uploads set total_views = $views where id = $id");
+$views = $conn->query("SELECT * FROM views where upload_id = $id ")->num_rows;
+$conn->query("UPDATE video_uploads set total_views = $views where code = '$code'");
+  
+
+
+
+
+	
 
 
 // if(isset($_POST['submit'])){
@@ -113,9 +113,9 @@ if(isset($_SESSION['login_id'])){
 	.likeAndDis div i {
 		cursor: pointer;
 	}
-	.likeAndDis div i:hover {
+	/* .likeAndDis div i:hover {
 		color: blue;
-	}
+	} */
 
 	.avtiveBlue{
 		color: blue;
@@ -209,7 +209,7 @@ if(isset($_SESSION['login_id'])){
 	</div>
 </div>
 
-
+<script src="./jquery.js"> </script> 
 <script>
 	$('.suggested').hover(function(){
 		$(this).addClass('active')
@@ -239,44 +239,108 @@ if(isset($_SESSION['login_id'])){
 	var nuLike = Number(valLike.innerText)
 	var nuDisLike = Number(valDisLike.innerText)
 
-
-	like.onclick= function(){
-			if(like.classList.contains('avtiveBlue')){
-				like.classList.remove('avtiveBlue')
-				nuLike -= 1
-				valLike.innerText = nuLike
-			} else {
-				nuLike += 1
-				valLike.innerText = nuLike
-				like.classList.add('avtiveBlue')
-				dislike.classList.remove('avtiveBlue')
-				islike = false
-			}
-			if(!isDisliked){
-			nuDisLike -= 1
-			valDisLike.innerText = nuDisLike
-		}
-	}
-
-	
-	dislike.onclick= function(){
-		if(dislike.classList.contains('avtiveBlue')){
-			dislike.classList.remove('avtiveBlue')
-			nuDisLike -= 1
-			valDisLike.innerText = nuDisLike
-		} else {
-			nuDisLike += 1
-			valDisLike.innerText = nuDisLike
-			dislike.classList.add('avtiveBlue')
+<?php 
+	if(isset($_SESSION['login_id'])){
+	?>
+	var islike = true
+	var isDisliked = true
+	 like.onclick= function(){
+		if(like.classList.contains('avtiveBlue')){
 			like.classList.remove('avtiveBlue')
-			isDisliked = false
-		}
-		if(!islike){
 			nuLike -= 1
 			valLike.innerText = nuLike
+		} else {
+			nuLike += 1
+			valLike.innerText = nuLike
+			like.classList.add('avtiveBlue')
+			dislike.classList.remove('avtiveBlue')
+			islike = false
 		}
+		if(!isDisliked){
+		nuDisLike -= 1
+		valDisLike.innerText = nuDisLike
+		isDisliked = true
 	}
 
+	const queryString = window.location.search;
+	const urlParams = new URLSearchParams(queryString);
+	var code = urlParams.get('code');
 	
+	
+	$(document).ready(function(){
+		var data = {
+			codelike: code,
+			nlike: nuLike
+		};
+		
+		$.ajax({
+			url: 'update.php',
+			type: 'post',
+			data: data, 
+			success: function(response){
+				//  alert(response);
+			}
+		});
+	});
+}
+
+
+dislike.onclick= function(){
+	if(dislike.classList.contains('avtiveBlue')){
+		dislike.classList.remove('avtiveBlue')
+		nuDisLike -= 1
+		valDisLike.innerText = nuDisLike
+	} else {
+		nuDisLike += 1
+		valDisLike.innerText = nuDisLike
+		dislike.classList.add('avtiveBlue')
+		like.classList.remove('avtiveBlue')
+		isDisliked = false
+	}
+	if(!islike){
+		nuLike -= 1
+		valLike.innerText = nuLike
+		islike = true
+	}
+
+	const urlParams = new URLSearchParams(window.location.search);
+	var code = urlParams.get('code');
+	// console.log(code)
+	
+	$(document).ready(function(){
+		var data = {
+			codeDlike: code,
+			nDlike: nuDisLike
+		};
+		
+		$.ajax({
+			url: 'update.php',
+			type: 'post',
+			data: data, 
+			success: function(response){
+				//  alert(response);
+			}
+		});
+	});
+	}
+
+
+<?php
+
+	} else {
+	?>
+	like.onclick= function(){
+			alert("hay dang nhap")
+	}
+	dislike.onclick = function(){
+		alert("hay dang nhap")
+	}
+	<?php
+	}
+?>
+
+
+
+		
 	
 </script>
