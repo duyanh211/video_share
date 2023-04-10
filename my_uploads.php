@@ -32,7 +32,7 @@
 				<hr>
 				<div class="row">
 					<?php  
-						$qry = $conn->query("SELECT * FROM uploads where user_id={$_SESSION['login_id']} ");
+						$qry = $conn->query("SELECT * FROM video_uploads where user_id={$_SESSION['login_id']} ");
 						while($row=$qry->fetch_assoc()):
 					?>
 					<div class="col-md-12 py-2 border-bottom">

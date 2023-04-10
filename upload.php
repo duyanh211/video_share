@@ -1,7 +1,7 @@
 <?php include 'db_connect.php' ?>
 <?php 
 if(isset($_GET['id'])){
-	$upload = $conn->query("SELECT up.*,concat(u.firstname,' ',u.lastname) as name,u.avatar FROM uploads up inner join users u on u.id =up.user_id where up.id = '{$_GET['id']}' ");
+	$upload = $conn->query("SELECT up.*,concat(u.firstname,' ',u.lastname) as name,u.avatar FROM video_uploads up inner join users u on u.id =up.user_id where up.id = '{$_GET['id']}' ");
 	foreach ($upload->fetch_array() as $k => $v) {
 		$$k = $v;
 	}

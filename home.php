@@ -64,7 +64,7 @@
 									$search = strtolower($_GET['s']);
 									$where = " where LOWER(title) LIKE '%$search%' or LOWER(description) LIKE '%$search%' ";
 								}
-								$qry = $conn->query("SELECT * FROM uploads $where order by rand()");
+								$qry = $conn->query("SELECT * FROM video_uploads $where order by rand()");
 								if($qry->num_rows > 0):
 								while($row=$qry->fetch_assoc()):
 							?>

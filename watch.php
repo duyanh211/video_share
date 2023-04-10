@@ -1,4 +1,14 @@
 <?php include 'db_connect.php' ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+
 <?php
  function getIPAddress() {  
     //whether ip is from the share internet  
@@ -15,7 +25,7 @@
      }  
      return $ip;  
 }  
-$upload = $conn->query("SELECT up.*,concat(u.firstname,' ',u.lastname) as name,u.avatar FROM uploads up inner join users u on u.id =up.user_id where up.code = '{$_GET['code']}' ");
+$upload = $conn->query("SELECT up.*,concat(u.firstname,' ',u.lastname) as name,u.avatar FROM video_uploads up inner join users u on u.id =up.user_id where up.code = '{$_GET['code']}' ");
 foreach ($upload->fetch_array() as $k => $v) {
 	$$k = $v;
 }
@@ -34,9 +44,19 @@ if(isset($_SESSION['login_id'])){
 	}
 
 }
-$views = $conn->query("SELECT * FROM views where upload_id = $id ")->num_rows;
-$conn->query("UPDATE uploads set total_views = $views where id = $id");
+	$views = $conn->query("SELECT * FROM views where upload_id = $id ")->num_rows;
+	$conn->query("UPDATE video_uploads set total_views = $views where id = $id");
+
+
+// if(isset($_POST['submit'])){
+// 		$comment = $_POST['comment'];
+// 		$Conn-> query("INSERT INTO comments (id_user,id_video, content, date_create) VALUES ( {$_SESSION['login_id']}, $id, '$comment', CURRENT_TIMESTAMP)");
+// 	}
+
+
  ?>
+
+
  <style type="text/css">
  	.suggested-img{
  		width: calc(30%);
@@ -59,6 +79,47 @@ $conn->query("UPDATE uploads set total_views = $views where id = $id");
  	#vid-watch{
  		max-height: 80vh
  	}
+	.card{
+		height: 2000px;
+	}
+
+	#comment {
+		margin-top: 10px;
+	}
+	.btn-cus{
+		position: absolute;
+		right: 0;
+	}
+
+	.underTitle{
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.likeAndDis{
+		display: flex;
+		flex-wrap: wrap;
+		
+	}
+
+	.likeAndDis div {
+		margin-right: 20px;
+		display: flex;
+		Flex-direction:  column;
+		align-items: center;
+		flex-wrap: wrap;
+	}
+
+	.likeAndDis div i {
+		cursor: pointer;
+	}
+	.likeAndDis div i:hover {
+		color: blue;
+	}
+
+	.avtiveBlue{
+		color: blue;
+	}
  </style>
 <div class="container-fluid py-2">
 	<div class="col-lg-12">
@@ -76,11 +137,25 @@ $conn->query("UPDATE uploads set total_views = $views where id = $id");
 								<h5 class="text-dark"><b><?php echo $title ?></b></h5>
 							</div>
 						</div>
-						<div class="col-md-12">
+						<div class="col-md-12 underTitle">
 							<div class="row">
 								<span class="badge badge-white"><b><?php echo date("M d, Y",strtotime($date_created)) ?></b></span>
-								<span class="badge badge-primary"><b><?php echo $views.($views > 1 ? ' views':' view') ?></b></span>
+								<span class="badge badge-primary" style="height: 20px;"><b><?php echo $views.($views > 1 ? ' views':' view') ?></b></span>
 							</div>
+
+							<!-- like btn -->
+							<?php 
+								$conn = mysqli_connect("localhost", "root", "", "sharingvideo");
+								$sql = "SELECT * FROM `video_uploads` WHERE id= $id";
+								$result = mysqli_query($conn, $sql);
+								$row = mysqli_fetch_array($result, 1);
+
+							?>
+							<div class="likeAndDis">
+								<div class="btnLike"><i id="btnLike" class="material-icons">thumb_up</i> <p id="valLike"><?php echo $row['like']?></p>  </div>
+								<div class="btnDis"><i id="btnDisLike" class="material-icons">thumb_down</i >  <p id="valDisLike"><?php echo $row['dislike']?></p></div>
+							</div>
+
 						</div>
 						<hr>
 						<div class="col-md-12">
@@ -91,14 +166,28 @@ $conn->query("UPDATE uploads set total_views = $views where id = $id");
 									<span class="d-flex justify-content-center bg-primary align-items center rounded-circle border py-2 px-3" ><h3 class="text-white m-0"><b><?php echo substr($name,0,1) ?></h3></b></span>
 								<?php endif; ?>
 									<h6 class="mx-3"><b><?php echo $name ?></b></h6>
+
+									<!-- btn subcribe -->
 							</div>
-							<h5><b>Description</b></h5>
+							<h5 style="margin-top:8px;"><b>Description</b></h5>
 							<p><?php echo str_replace(array("\n","\r"),'<br/>',$description) ?></p>
 						</div>
+
+							<div style="height: 100px; width: 500px: z-index: 1; margin-top:20px; position: relative;"> 
+								<form action="./watch.php" method="post">
+									<div class="mb-3 mt-3">
+										<h1>Comment</h1>
+									<textarea class="form-control" rows="3" id="comment" name="comment"></textarea>
+									</div>
+									<button type="submit" class="btn btn-primary btn-cus" name = "submit">Submit</button>
+								</form>
+							</div>
+
+
 					</div>
-					<div class="col-md-4 border-left">
+					<div class="col-md-4">
 						<?php 
-							$qry = $conn->query("SELECT * FROM uploads where id !=$id order by total_views asc,rand() limit 10");
+							$qry = $conn->query("SELECT * FROM video_uploads where id !=$id order by total_views asc,rand() limit 10");
 							while($row= $qry->fetch_assoc()):
 						?>
 						<a class="d-flex w-100 border-bottom pb-1 suggested" href="index.php?page=watch&code=<?php echo $row['code'] ?>">
@@ -119,6 +208,8 @@ $conn->query("UPDATE uploads set total_views = $views where id = $id");
 		</div>
 	</div>
 </div>
+
+
 <script>
 	$('.suggested').hover(function(){
 		$(this).addClass('active')
@@ -135,4 +226,57 @@ $conn->query("UPDATE uploads set total_views = $views where id = $id");
 				vid.trigger('pause')
 			},500)
 	})
+
+
+	const S = document.querySelector.bind(document)
+	const SS = document.querySelectorAll.bind(document)
+
+	var like = S('#btnLike')
+	var dislike = S('#btnDisLike')
+	var valLike = S('#valLike')
+	var valDisLike = S('#valDisLike')
+
+	var nuLike = Number(valLike.innerText)
+	var nuDisLike = Number(valDisLike.innerText)
+
+
+	like.onclick= function(){
+			if(like.classList.contains('avtiveBlue')){
+				like.classList.remove('avtiveBlue')
+				nuLike -= 1
+				valLike.innerText = nuLike
+			} else {
+				nuLike += 1
+				valLike.innerText = nuLike
+				like.classList.add('avtiveBlue')
+				dislike.classList.remove('avtiveBlue')
+				islike = false
+			}
+			if(!isDisliked){
+			nuDisLike -= 1
+			valDisLike.innerText = nuDisLike
+		}
+	}
+
+	
+	dislike.onclick= function(){
+		if(dislike.classList.contains('avtiveBlue')){
+			dislike.classList.remove('avtiveBlue')
+			nuDisLike -= 1
+			valDisLike.innerText = nuDisLike
+		} else {
+			nuDisLike += 1
+			valDisLike.innerText = nuDisLike
+			dislike.classList.add('avtiveBlue')
+			like.classList.remove('avtiveBlue')
+			isDisliked = false
+		}
+		if(!islike){
+			nuLike -= 1
+			valLike.innerText = nuLike
+		}
+	}
+
+	
+	
 </script>

@@ -17,7 +17,7 @@ Class Action {
 
 	function login(){
 		extract($_POST);
-		$qry = $this->db->query("SELECT * FROM users where email = '".$email."' and password = '".md5($password)."' ");
+		$qry = $this->db->query("SELECT * FROM users where email = '".$email."' and password = '".$password."' ");
 		if($qry->num_rows > 0){
 			foreach ($qry->fetch_array() as $key => $value) {
 				if($key != 'password' && !is_numeric($key))
@@ -97,14 +97,14 @@ Class Action {
 			$i = 1;
 			while($i == 1){
 				$_name =substr(str_shuffle($chars), 0, 16);
-				$chk = $this->db->query("SELECT * from uploads where code = '$_name' and id !='$id' ")->num_rows;
+				$chk = $this->db->query("SELECT * from video_uploads where code = '$_name' and id !='$id' ")->num_rows;
 				if($chk <= 0){
 					$i = 0;
 				}
 			}
 			$data .= ", code = '$_name' ";
 		}else{
-			$_name = $this->db->query("SELECT * from uploads where id = '$id' ")->fetch_array()['code'];
+			$_name = $this->db->query("SELECT * from video_uploads where id = '$id' ")->fetch_array()['code'];
 		}
 		if($_FILES['img']['tmp_name'] != ''){
 			$ext = substr($_FILES['img']['name'], strrpos($_FILES['img']['name'], '.')+1);
@@ -126,10 +126,10 @@ Class Action {
 		}
 		if(empty($id)){
 			$data .= ", user_id = {$_SESSION['login_id']} ";
-			$save = $this->db->query("INSERT INTO uploads set ".$data);
+			$save = $this->db->query("INSERT INTO video_uploads set ".$data);
 			$id=$this->db->insert_id;
 		}else{
-			$save = $this->db->query("UPDATE uploads set ".$data." where id = ".$id);
+			$save = $this->db->query("UPDATE video_uploads set ".$data." where id = ".$id);
 		}
 		if($save){
 				return 1;
@@ -137,8 +137,8 @@ Class Action {
 	}
 	function delete_upload(){
 		extract($_POST);
-		$qry = $this->db->query("SELECT * from uploads where id = '$id' ")->fetch_array();
-		$delete = $this->db->query("DELETE FROM uploads where id = '$id'");
+		$qry = $this->db->query("SELECT * from video_uploads where id = '$id' ")->fetch_array();
+		$delete = $this->db->query("DELETE FROM video_uploads where id = '$id'");
 		if($delete){
 			if(!empty($qry['thumbnail_path'])){
 				if(is_file('assets/uploads/thumbnail/'.$qry['thumbnail_path']))
