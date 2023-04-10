@@ -117,6 +117,21 @@ $conn->query("UPDATE video_uploads set total_views = $views where code = '$code'
 		color: blue;
 	} */
 
+	
+	.description{
+		margin-top:12px; 
+		border-radius: 5px; 
+		background-color:#EEEEEE;"
+	}
+	
+	.description h5{
+		margin:8px;
+	}
+	
+	.description p{
+		margin:8px;
+	}
+	
 	.avtiveBlue{
 		color: blue;
 	}
@@ -169,8 +184,10 @@ $conn->query("UPDATE video_uploads set total_views = $views where code = '$code'
 
 									<!-- btn subcribe -->
 							</div>
-							<h5 style="margin-top:8px;"><b>Description</b></h5>
-							<p><?php echo str_replace(array("\n","\r"),'<br/>',$description) ?></p>
+							<div class="description">
+								<h5><b>Description</b></h5>
+								<p><?php echo str_replace(array("\n","\r"),'<br/>',$description) ?></p>
+							</div>
 						</div>
 
 							<div style="height: 100px; width: 500px: z-index: 1; margin-top:20px; position: relative;"> 
