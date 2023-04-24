@@ -21,3 +21,31 @@ if(isset($_POST['codeDlike'])){
     } 
   
 }
+
+
+// subcribe
+if(isset($_POST['id_Channel'])){
+    $id_Channel = $_POST['id_Channel'];
+    $id_Subcr = $_POST['id_Subcr'];
+    $sql = "INSERT INTO `subcribe` VALUES ($id_Subcr,$id_Channel)";
+
+    if(mysqli_query($conn, $sql)){
+        echo "Đăng ký thành công";
+    } else {
+        echo "Lỗi: " . $sql . "<br>" . mysqli_error($conn);
+   }
+}
+
+// unsub
+
+if(isset($_POST['idCN_unSub'])){
+    $idCN_unSub = $_POST['idCN_unSub'];
+    $idUser_unSub = $_POST['idUser_unSub'];
+    $sql = "DELETE FROM `subcribe` WHERE id_subcriber = $idUser_unSub AND id_channel = $idCN_unSub";
+
+    if(mysqli_query($conn, $sql)){
+        echo "Huỷ đăng ký thành công";
+    }  else {
+	 	echo "Lỗi: " . $sql . "<br>" . mysqli_error($conn);
+    }
+}

@@ -20,9 +20,59 @@
 	.vid-details{
 		width: calc(70%)!important;
 	}
+
+	.container {
+		padding-left: 0;
+		margin-left: 0;
+		position: relative;
+	}
+	.disp_f {
+		display: flex;
+		
+	}
+	.listSubc{
+		margin-top: 16px;
+   		padding-top: 3px;
+		width: 32vh;
+		height: 100vh;
+		background: #8be18b;
+	}
+
+	.position-cus{
+		padding: 0;
+		position: absolute;
+		left: 200px;
+	}
+	.channel{
+		max-width: 200px;
+		margin-top: 8px;
+		padding-left: 4px;
+		display: flex;
+	}
+
+	.channel:hover{
+		opacity: 0.8;
+	}
+	.imgCn{
+		margin-top: 3px;
+		height: 30px;
+		width: 30px;
+	}
+	.channel p{
+		color: #fff;
+		line-height: 100%;
+		margin-left: 18px;
+		margin-top: 5px;
+		font-size: 16px;
+	}
 </style>
-<div class="container py-2">
-	<div class="col-lg-12">
+<div class="container disp_f">
+	<div class="listSubc">
+		<h5 style="font-weight: 700;">Subscribed Channel</h5>
+		<a href="#" class="channel"><img src="./assets/img/user1.jpg" class="imgCn"><p>channel name</p></a>
+		<a href="#" class="channel"><img src="./assets/img/user1.jpg" class="imgCn"><p>channel name</p></a>
+	</div>
+	<div class="col-lg-12 position-cus">
 		<div class="card bg-light">
 			<div class="card-body">
 				<div class="col-md-12 d-flex justify-content-between">
