@@ -29,6 +29,8 @@ $upload = $conn->query("SELECT up.*,concat(u.firstname,' ',u.lastname) as name,u
 foreach ($upload->fetch_array() as $k => $v) {
 	$$k = $v;
 }
+
+
 if(isset($_SESSION['login_id'])){
 	if($_SESSION['login_id'] != $user_id){
 		$chk = $conn->query("SELECT * FROM views where upload_id = $id and user_id ={$_SESSION['login_id']} ")->num_rows;
@@ -228,14 +230,33 @@ $conn->query("UPDATE video_uploads set total_views = $views where code = '$code'
 						<hr>
 						<div class="col-md-12">
 							<div class="d-flex w-100 align-items-center">
-								<?php if(!empty($avatar)): ?>
-									<img src="assets/uploads/<?php echo $avatar ?>" class="rounded-circle" width="50px" height="50px" alt="">
-								<?php else: ?>
-									<span class="d-flex justify-content-center bg-primary align-items center rounded-circle border py-2 px-3" ><h3 class="text-white m-0"><b><?php echo substr($name,0,1) ?></h3></b></span>
-								<?php endif; ?>
-									<h6 class="mx-3"><b><?php echo $name ?></b></h6>
+								<div class="d-flex w-100 align-items-center">
+									<?php if(!empty($avatar)): ?>
+										<img src="assets/uploads/<?php echo $avatar ?>" class="rounded-circle" width="50px" height="50px" alt="">
+									<?php else: ?>
+										<span class="d-flex justify-content-center bg-primary align-items center rounded-circle border py-2 px-3" ><h3 class="text-white m-0"><b><?php echo substr($name,0,1) ?></h3></b></span>
+									<?php endif; ?>
+										<h6 class="mx-3"><b><?php echo $name ?></b></h6>
+								</div>
 
 									<!-- btn subcribe -->
+									<?php 
+										$idsubcriber = $_SESSION['login_id'];
+										$sql = "SELECT * FROM `subcribe` WHERE id_subcriber= $idsubcriber and id_channel = $id";
+										$result = mysqli_query($conn, $sql);
+										$row = mysqli_fetch_array($result);
+										$idcn = json_encode($id);
+										if ($row > 0) {
+											?>
+											<button id="unSubcribe" class="btn" value="<?php echo $_SESSION['login_id']; ?>" style="width: 140px; background: #ccc;" onclick = "unSubcribe()">Đã dăng ký</button>
+											<?php
+										  } else {
+											?>
+												<button id="subcribe" class="btn btn-dark" value="<?php echo $_SESSION['login_id']; ?>" style="width: 140px;" onclick = "subcribe()"> Đăng ký </button>
+											
+											<?php
+										  }
+									?>
 							</div>
 							<div class="description">
 								<h5><b>Description</b></h5>
@@ -246,7 +267,7 @@ $conn->query("UPDATE video_uploads set total_views = $views where code = '$code'
 <!--
 								<form action="./watch.php" method="post">
 									<div class="mb-3 mt-3">
-										<h1>Comment</h1>
+										<h1>Bình luận</h1>
 									<textarea class="form-control" rows="3" id="comment" name="comment"></textarea>
 									</div>
 									<button type="submit" class="btn btn-primary btn-cus" name = "submit">Submit</button>
@@ -406,6 +427,49 @@ dislike.onclick= function(){
 			}
 		});
 	});
+	}
+
+	// subcribe
+  var $idcn  = <?php echo $idcn; ?>;
+	function subcribe(){
+		$(document).ready(function(){
+			var data = {
+				id_Channel: $idcn,
+				id_Subcr: $('#subcribe').val()
+			};
+			// console.log(data);
+			$.ajax({
+				url: 'update.php',
+				type: 'post',
+				data: data,
+				success: function(rsp){
+					alert(rsp)
+					location.reload();
+				}
+			})
+		})
+	}
+
+	//UnSubcribe
+	function unSubcribe(){
+		$(document).ready(function(){
+			var data = {
+				idCN_unSub: $idcn,
+				idUser_unSub: $('#unSubcribe').val()
+			}
+			// console.log(data);
+			$.ajax({
+				url: 'update.php',
+				type: 'post',
+				data: data,
+				success: function(rsp){
+					alert(rsp)
+					location.reload();
+				}
+			})
+
+
+		})
 	}
 
 
