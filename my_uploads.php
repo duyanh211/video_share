@@ -69,8 +69,31 @@
 <div class="container disp_f">
 	<div class="listSubc">
 		<h5 style="font-weight: 700;">Subscribed Channel</h5>
-		<a href="#" class="channel"><img src="./assets/img/user1.jpg" class="imgCn"><p>channel name</p></a>
-		<a href="#" class="channel"><img src="./assets/img/user1.jpg" class="imgCn"><p>channel name</p></a>
+		<?php if(isset($_SESSION['login_id'])){
+			$qry = $conn->query("SELECT up.*, us.*
+					FROM video_uploads up
+					INNER JOIN subcribe sb ON sb.id_channel = up.id
+					INNER JOIN users us ON up.user_id = us.id
+					WHERE sb.id_subcriber = '".$_SESSION['login_id']."'");
+					
+			while($row=$qry->fetch_assoc()):
+			
+			$avatar_str = $row['avatar'];
+			// Tách chuỗi thành mảng các phần tử, ngăn cách bởi dấu "_"
+			$avatar_array = explode("_", $avatar_str);
+			// Lấy phần tử cuối cùng trong mảng, đó chính là tên file
+			$file_name_only = array_pop($avatar_array);
+			?>
+		
+			<a href="#" class="channel"><img src="./assets/img/<?php echo $file_name_only; ?>" class="imgCn"><p><?php echo $row['firstname']." ".$row['middlename']." ".$row['lastname']; ?></p></a>
+			
+			<?php endwhile; ?>
+			
+			<?php
+		}
+		?>
+		
+		
 	</div>
 	<div class="col-lg-12 position-cus">
 		<div class="card bg-light">
@@ -99,7 +122,7 @@
 						    <p class="card-text truncate"><?php echo $row['description'] ?></p>
 						    <div class="d-flex w-100">
 						   		<button class="btn-sm btn-block btn-outline-primary col-sm-2 mr-2 edit_upload" type="button" data-id ="<?php echo $row['id'] ?>"><i class="fa fa-edit"></i> Edit</button>
-						   		<button class="btn-sm btn-block btn-outline-danger col-sm-2 m-0 delete_upload" type="button" data-id ="<?php echo $row['id'] ?>"><i class="fa fa-edit"></i> Delete</button>
+						   		<button class="btn-sm btn-block btn-outline-danger col-sm-2 m-0 delete_upload" type="button" onclick="delete_upload(<?php echo $row['id'] ?>)"><i class="fa fa-edit"></i> Delete</button>
 						    </div>
 						  </div>
 						</div>
@@ -138,20 +161,15 @@
 		_conf("Are you sure to delete this data?","delete_upload",[$(this).attr('data-id')])
 	})
 	function delete_upload($id){
-		start_load()
 		$.ajax({
 			url:'ajax.php?action=delete_upload',
 			method:'POST',
 			data:{id:$id},
 			success:function(resp){
-				if(resp==1){
-					alert_toast("Data successfully deleted",'success')
-					setTimeout(function(){
-						location.reload()
-					},1500)
-
+					alert_toast(resp)
+					location.reload()
 				}
-			}
-		})
-	}
+			})
+		}
+	
 </script>

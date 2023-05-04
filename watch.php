@@ -191,15 +191,15 @@ $conn->query("UPDATE video_uploads set total_views = $views where code = '$code'
 										$idsubcriber = $_SESSION['login_id'];
 										$sql = "SELECT * FROM `subcribe` WHERE id_subcriber= $idsubcriber and id_channel = $id";
 										$result = mysqli_query($conn, $sql);
-										$row = mysqli_fetch_array($result);
-										$idcn = json_encode($id);
+										$idcn =  json_encode($id);
+										$row = mysqli_fetch_assoc($result);
 										if ($row > 0) {
 											?>
 											<button id="unSubcribe" class="btn" value="<?php echo $_SESSION['login_id']; ?>" style="width: 140px; background: #ccc;" onclick = "unSubcribe()">Đã dăng ký</button>
 											<?php
 										  } else {
 											?>
-												<button id="subcribe" class="btn btn-dark" value="<?php echo $_SESSION['login_id']; ?>" style="width: 140px;" onclick = "subcribe()"> Đăng ký </button>
+												<button id="subcribe" class="btn btn-danger" value="<?php echo $_SESSION['login_id']; ?>" style="width: 140px;" onclick = "subcribe()"> Đăng ký </button>
 											
 											<?php
 										  }

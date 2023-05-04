@@ -44,7 +44,7 @@ if(isset($_POST['idCN_unSub'])){
     $sql = "DELETE FROM `subcribe` WHERE id_subcriber = $idUser_unSub AND id_channel = $idCN_unSub";
 
     if(mysqli_query($conn, $sql)){
-        echo "Huỷ đăng ký thành công";
+        echo "Huỷ đăng ký";
     }  else {
 	 	echo "Lỗi: " . $sql . "<br>" . mysqli_error($conn);
     }

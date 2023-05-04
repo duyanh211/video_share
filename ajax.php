@@ -1,5 +1,7 @@
 <?php
+	include 'db_connect.php';
 ob_start();
+
 $action = $_GET['action'];
 include 'admin_class.php';
 $crud = new Action();
@@ -24,9 +26,15 @@ if($action == 'save_upload'){
 		echo $save;
 }
 if($action == 'delete_upload'){
-	$delete = $crud->delete_upload();
-	if($delete)
-		echo $delete;
+	$id = $_POST['id'];
+	$qryo = $conn->query("DELETE FROM `subcribe` WHERE id_channel = '$id'");
+	$qryy = $conn->query("DELETE FROM `views` WHERE upload_id = '$id'");
+	if($qryo && $qryy){
+		$qry = $conn->query("DELETE FROM `video_uploads` WHERE id = '$id'");
+		if($qry){
+			echo "Delete success";
+		}
+	} else echo "Unsuccess delete";
 }
 ob_end_flush();
 ?>
