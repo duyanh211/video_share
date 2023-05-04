@@ -83,14 +83,6 @@ $conn->query("UPDATE video_uploads set total_views = $views where code = '$code'
 		height: 2000px;
 	}
 
-	#comment {
-		margin-top: 10px;
-	}
-	.btn-cus{
-		position: absolute;
-		right: 0;
-	}
-
 	.underTitle{
 		display: flex;
 		justify-content: space-between;
@@ -135,6 +127,67 @@ $conn->query("UPDATE video_uploads set total_views = $views where code = '$code'
 	.avtiveBlue{
 		color: blue;
 	}
+	
+	.comment-box {
+		font-family: Arial, Helvetica, sans-serif;
+		margin: 40px 20px;
+		max-width: auto;
+	}
+
+	.comment-heading {
+		font-size: 20px;
+		margin: 20px 0;
+	}
+
+	.comment-list {
+		max-height: 400px;
+		overflow-y: auto;
+	}
+
+	.avatar-box {
+		float: left;
+		margin-right: 10px;
+	}
+
+	.avatar {
+		border-radius: 50%;
+		width: 60px;
+		height: 60px;
+	}
+
+	.comment-input-box {
+		overflow: hidden;
+	}
+
+	.comment-input {
+		width: 100%;
+		resize: none;
+		padding: 10px;
+		margin-top: 5px;
+		margin-bottom: 5px;
+		border-radius: 5px;
+		box-sizing: border-box;
+	}
+
+	.comment-submit {
+		display: inline-block;
+		width: 60px;
+		height: 40px;
+		text-align: center;
+		line-height: 40px;
+		background-color: #007bff;
+		color: #fff;
+		border-radius: 5px;
+		margin-bottom: 50px;
+		text-decoration: none;
+	}
+
+	.comment-submit:hover {
+		background-color: #0062cc;
+		cursor: pointer;
+	}
+
+
  </style>
 <div class="container-fluid py-2">
 	<div class="col-lg-12">
@@ -189,8 +242,8 @@ $conn->query("UPDATE video_uploads set total_views = $views where code = '$code'
 								<p><?php echo str_replace(array("\n","\r"),'<br/>',$description) ?></p>
 							</div>
 						</div>
-
 							<div style="height: 100px; width: 500px: z-index: 1; margin-top:20px; position: relative;"> 
+<!--
 								<form action="./watch.php" method="post">
 									<div class="mb-3 mt-3">
 										<h1>Comment</h1>
@@ -198,9 +251,23 @@ $conn->query("UPDATE video_uploads set total_views = $views where code = '$code'
 									</div>
 									<button type="submit" class="btn btn-primary btn-cus" name = "submit">Submit</button>
 								</form>
+-->
+								<div class="comment-box">
+									<h3 class="comment-heading"><b>Comment:</b></h3>
+									<form id="comment-form">
+										<div class="avatar-box">
+											<img class="avatar" src="https://www.gravatar.com/avatar/?s=60&d=mp" alt="Avatar">
+										</div>
+										<div class="comment-input-box">
+											<textarea id="comment-input" class="comment-input" rows="3" placeholder="Nhận xét của bạn"></textarea>
+											<a id="comment-submit" class="comment-submit" href="#">Gửi</a>
+										</div>
+									</form>
+									<div class="comment-list">
+										<!-- Danh sách bình luận sẽ được hiển thị tại đây -->
+									</div>
+								</div>
 							</div>
-
-
 					</div>
 					<div class="col-md-4">
 						<?php 
@@ -356,8 +423,58 @@ dislike.onclick= function(){
 	}
 ?>
 
+// Gửi bình luận mới lên máy chủ và lưu trữ vào cơ sở dữ liệu
+function addComment() {
+  var commentInput = $('#comment-input').val();
 
+  if (commentInput == '') {
+    return false;
+  }
 
+  $.ajax({
+    type: "POST",
+    url: "add_comment.php",
+    data: {
+      comment: commentInput
+    },
+    async: true,
+    cache: false,
+    success: function(data) {
+      getComments();
+      $('#comment-input').val('');
+    },
+    error: function(XMLHttpRequest, textStatus, errorThrown) {
+      console.log(textStatus + ": " + errorThrown);
+    }
+  });
+}
+
+$(document).ready(function() {
+  // Khởi tạo danh sách bình luận
+  getComments();
+
+  // Khi người dùng nhấn Gửi, gửi bình luận lên máy chủ và lưu trữ vào cơ sở dữ liệu
+  $('#comment-submit').on('click', function(e) {
+    e.preventDefault();
+    addComment();
+  });
+});
+
+//Lấy danh sách bình luận từ cơ sở dữ liệu
+function getComments() {
+  $.ajax({
+    type: "POST",
+    url: "get_comments.php",
+    async: true,
+    cache: false,
+    success: function(data) {
+      $('.comment-list').html(data);
+    },
+    error: function(XMLHttpRequest, textStatus, errorThrown) {
+      console.log(textStatus + ": " + errorThrown);
+    }
+  });
+}
 		
 	
 </script>
