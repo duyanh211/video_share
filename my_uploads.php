@@ -1,5 +1,9 @@
 <?php include 'db_connect.php' ?>
 <style>
+
+	main {
+		background: #8be18b;
+	}
 	.vid-item{
 		cursor: pointer;
 		position: relative;

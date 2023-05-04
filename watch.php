@@ -280,8 +280,8 @@ $conn->query("UPDATE video_uploads set total_views = $views where code = '$code'
 											<img class="avatar" src="https://www.gravatar.com/avatar/?s=60&d=mp" alt="Avatar">
 										</div>
 										<div class="comment-input-box">
-											<textarea id="comment-input" class="comment-input" rows="3" placeholder="Nhận xét của bạn"></textarea>
-											<a id="comment-submit" class="comment-submit" href="#">Gửi</a>
+											<textarea id="comment-input" class="comment-input" rows="3" name="comment" placeholder="Nhận xét của bạn"></textarea>
+											<button id="comment-submit" class="comment-submit" name="submit" href="#" onclick="addComment()" >Gửi</button>
 										</div>
 									</form>
 									<div class="comment-list">
@@ -488,27 +488,29 @@ dislike.onclick= function(){
 ?>
 
 // Gửi bình luận mới lên máy chủ và lưu trữ vào cơ sở dữ liệu
+
+<?php 
+$idusss = $_SESSION['login_id'];
+$iduser = json_encode(idusss);
+?>
+
+  var iduser  = <?php echo $iduser; ?>;
 function addComment() {
   var commentInput = $('#comment-input').val();
-
   if (commentInput == '') {
     return false;
   }
-
+	var data= {
+		comment: commentInput,
+		id: $idcn,
+		iduser: iduser
+	}
   $.ajax({
     type: "POST",
     url: "add_comment.php",
-    data: {
-      comment: commentInput
-    },
-    async: true,
-    cache: false,
+    data: data,
     success: function(data) {
-      getComments();
-      $('#comment-input').val('');
-    },
-    error: function(XMLHttpRequest, textStatus, errorThrown) {
-      console.log(textStatus + ": " + errorThrown);
+      alert(data)
     }
   });
 }
