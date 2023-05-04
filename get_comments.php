@@ -5,13 +5,9 @@ $conn=new mysqli("localhost", "root", "", "sharingvideo");
 if (!$conn) {
     die("Kết nối đến cơ sở dữ liệu thất bại: " . mysqli_connect_error());
 }
-/*
-// Lấy tất cả bình luận từ cơ sở dữ liệu
-//$sql = "SELECT * FROM comments ORDER BY date_create DESC";
-	$sql = "SELECT c.id, c.content, c.date_create, u.firstname, u.lastname, v.title 
-			FROM comments c
-			JOIN users u ON c.id_user = u.id
-			JOIN video_uploads v ON c.id_video = v.id";
+
+	$sql = "SELECT * FROM comments c, users u
+			WHERE c.id_user = u.id";
 	$result = mysqli_query($conn, $sql);
 
 	if (mysqli_num_rows($result) > 0) {
@@ -36,14 +32,12 @@ if (!$conn) {
 	} else {
 		echo "<p>Không có bình luận nào.</p>";
 		}
-*/ 
-if (isset($_GET['id_video'])) {
-	$video_id = $_GET['id_video'];
-	$sql = "SELECT c.id, c.content, c.date_create, u.firstname, u.lastname, v.title 
-			FROM comments c
-			JOIN users u ON c.id_user = u.id
-			JOIN video_uploads v ON c.id_video = v.id
-			WHERE c.id_video = {$video_id}";
+
+/*
+if (isset($_GET['id'])) {
+	$video_id = $_GET['id'];
+	$sql = "SELECT * FROM comments c, users u, video_uploads v
+			WHERE c.id_user = u.id AND c.id_video = v.id AND v.id = {$video_id}";
 	$result = mysqli_query($conn, $sql);
 
 	if (mysqli_num_rows($result) > 0) {
@@ -69,10 +63,9 @@ if (isset($_GET['id_video'])) {
 		echo "<p>Không có bình luận nào.</p>";
 		}
 } else {
-    // Xử lý trường hợp không tồn tại tham số id
     echo "Không tìm thấy video cần xem bình luận.";
 	}
-
+*/
 // Đóng kết nối tới cơ sở dữ liệu
 mysqli_close($conn);
 ?>
